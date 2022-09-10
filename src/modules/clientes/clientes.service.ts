@@ -25,11 +25,11 @@ export class ClientesService {
     return cliente;
   }
 
-  findAll() {
+  async findAll() {
     return this.prisma.usuario.findMany();
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return this.prisma.usuario.findUnique({
       where: {
         id: id,
@@ -37,11 +37,38 @@ export class ClientesService {
     });
   }
 
-  update(id: number, updateClienteDto: UpdateClienteDto) {
-    return `This action updates a #${id} cliente`;
+  async update(id: number, updateClienteDto: UpdateClienteDto) {
+    const clienteExiste = await this.prisma.usuario.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!clienteExiste) {
+      throw new Error('Cliente não encontrado!');
+    }
+
+    return this.prisma.usuario.update({
+      where: {
+        id: id,
+      },
+      data: updateClienteDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cliente`;
+  async remove(id: number) {
+    const clienteExiste = await this.prisma.usuario.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!clienteExiste) {
+      throw new Error('Cliente não encontrado!');
+    }
+
+    return this.prisma.usuario.delete({
+      where: { id: id },
+    });
   }
 }
