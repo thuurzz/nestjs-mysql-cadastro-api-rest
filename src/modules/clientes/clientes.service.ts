@@ -26,11 +26,15 @@ export class ClientesService {
   }
 
   findAll() {
-    return `This action returns all clientes`;
+    return this.prisma.usuario.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} cliente`;
+    return this.prisma.usuario.findUnique({
+      where: {
+        id: id,
+      },
+    });
   }
 
   update(id: number, updateClienteDto: UpdateClienteDto) {
