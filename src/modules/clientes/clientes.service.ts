@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 
 @Injectable()
 export class ClientesService {
-  create(createClienteDto: CreateClienteDto) {
-    return 'This action adds a new cliente';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createClienteDto: CreateClienteDto) {
+    const clienteExiste = await this.prisma.usuario.findFirst({
+      where: {
+        name: createClienteDto.name,
+      },
+    });
+
+    if (clienteExiste) {
+      throw new Error('Cliente já cadastrado!');
+    }
+
+    const cliente = await this.prisma.usuario.create({
+      data: createClienteDto,
+    });
+
+    return cliente;
   }
 
   findAll() {
